@@ -18,15 +18,21 @@ static bool scroll_right = true;
 static const char* scroll_begin;
 static const char* scroll_ptr;
 
+static uint8_t selected_line = 0;
+
 static void lcd_ui_draw_main_screen(void);
+static void lcd_ui_draw_scrollable_list(void);
 static void lcd_handle_main_screen(void);
 static void lcd_handle_scrollable_list(void);
 static void lcd_ui_handle_updating_time(void);
 static void lcd_ui_handle_scroll(void);
 
 void lcd_ui_init(void) {
-	ui_state = HANDLE_MAIN_SCREEN;
-	lcd_ui_draw_main_screen();
+	//ui_state = HANDLE_MAIN_SCREEN;
+	//lcd_ui_draw_main_screen();
+	
+	ui_state = HANDLE_SCROLLABLE_LIST;
+	lcd_ui_draw_scrollable_list();
 }
 
 static void lcd_ui_draw_main_screen(void) {
@@ -35,6 +41,27 @@ static void lcd_ui_draw_main_screen(void) {
     lcd_locate(3, 0);
     lcd_str("Volume: ");
     lcd_ui_update_volume();
+}
+
+static void lcd_ui_draw_scrollable_list(void) {
+	if (ui_state != HANDLE_SCROLLABLE_LIST) { return; }
+	int stream_id = 1;
+	char buf[32];
+	char* url = NULL;
+	for (int line=0; line<4; line++) {
+		url = get_station_url_from_file(stream_id, buf, sizeof(buf));
+		if (url != NULL) {
+			lcd_locate(line, 0);
+			if (line == selected_line) {
+				lcd_str("->");
+			}
+			else {
+				lcd_str("  ");
+			}
+			lcd_str_padd_rest(buf, LCD_COLS-2, ' ');
+		}
+		stream_id++;
+	}
 }
 
 void lcd_ui_update_volume(void) {
@@ -117,7 +144,7 @@ static void lcd_handle_main_screen(void) {
 }
 
 static void lcd_handle_scrollable_list(void) {
-	
+
 }
 
 static void lcd_ui_handle_scroll(void) {

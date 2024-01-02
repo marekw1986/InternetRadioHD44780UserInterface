@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include <sys/time.h>
 #include "low_level.h"
 
 void lcd_locate(uint8_t x, uint8_t y) {
 	printf("%c[%d;%df",0x1B,x+1,y);
+	fflush(stdout);
 }
 
 uint32_t millis (void) {
@@ -22,6 +24,7 @@ uint16_t lcd_str_part(const char* str, const uint16_t len) {
             break;
         }
     }
+    fflush(stdout);
     return len-cnt;
 }
 
@@ -113,6 +116,7 @@ uint16_t lcd_utf8str_part(const char* str, const uint16_t len) {
             break;
         }
     }
+    fflush(stdout);
     return len-cnt;
 }
 
@@ -122,6 +126,7 @@ void lcd_str_padd_rest(const char* str, const uint16_t len, char padd) {
 		lcd_char(padd);
 		rest--;
 	}
+	fflush(stdout);
 }
 
 void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd) {
@@ -130,4 +135,51 @@ void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd) {
 		lcd_char(padd);
 		rest--;
 	}
+	fflush(stdout);
+}
+
+char* get_station_url_from_file(uint16_t number, char* stream_name, size_t stream_name_len) {
+	char* res = NULL;
+	switch(number) {
+		case 1:
+		strncpy(stream_name, "Antyradio", stream_name_len);
+		res = "http://an01.cdn.eurozet.pl/ant-waw.mp3";
+		break;
+		
+		case 2:
+		strncpy(stream_name, "PR1", stream_name_len);
+		res = "http://stream3.polskieradio.pl:8900/";
+		break;
+		
+		case 3:
+		strncpy(stream_name, "PR2", stream_name_len);
+		res = "http://stream3.polskieradio.pl:8902/";
+		break;
+		
+		case 4:
+		strncpy(stream_name, "PR3", stream_name_len);
+		res = "http://stream3.polskieradio.pl:8904/";
+		break;
+		
+		case 5:
+		strncpy(stream_name, "PR24", stream_name_len);
+		res = "http://stream3.polskieradio.pl:8080/";
+		break;
+		
+		case 6:
+		strncpy(stream_name, "Kraków (32 kbps)", stream_name_len);
+		res = "http://stream4.nadaje.com:9678/radiokrakow-s2";
+		break;
+		
+		case 7:
+		strncpy(stream_name, "Kraków", stream_name_len);
+		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
+		break;
+		
+		default:
+		strncpy(stream_name, "", stream_name_len);
+		res = NULL;
+		break;
+	}
+	return res;
 }
