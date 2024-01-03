@@ -7,9 +7,9 @@
 
 int main (char** argv, int argc) {
 	system("clear");
-	lcd_ui_init();
+	ui_init();
 	while (1) {
-		lcd_ui_handle();
+		ui_handle();
 		sleep(1);
 	}
 	return 1;

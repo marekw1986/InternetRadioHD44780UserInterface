@@ -3,6 +3,8 @@
 #include <sys/time.h>
 #include "low_level.h"
 
+uint8_t dummy_byte = 0;
+
 void lcd_locate(uint8_t x, uint8_t y) {
 	printf("%c[%d;%df",0x1B,x+1,y);
 	fflush(stdout);
@@ -183,3 +185,17 @@ char* get_station_url_from_file(uint16_t number, char* stream_name, size_t strea
 	}
 	return res;
 }
+
+void button_init(button_t* btn, void*, uint8_t, void (*push_proc)(void), void (*long_proc)(void)) {
+	
+}
+
+void button_handle(button_t* btn) {
+	
+}
+
+void rotary_init(void) {}
+void VS1003_play_prev(void) {}
+void VS1003_play_next(void) {}
+void VS1003_setVolume(uint8_t) {}
+int8_t rotary_handle(void) { return 0; }
