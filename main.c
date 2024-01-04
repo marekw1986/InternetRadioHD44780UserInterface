@@ -72,7 +72,7 @@ int main (char** argv, int argc) {
 					break;
 					
 					case 'p':
-					button_buffer[ROTARY_IND] = ROTARY_POSITIVE;
+					button_buffer[ROTARY_IND] = ROTARY_NEGATIVE;
 					break;
 					
 					case 'o':
