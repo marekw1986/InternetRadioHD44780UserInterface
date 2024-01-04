@@ -46,10 +46,12 @@ void ui_init(void) {
 void ui_switch_state(ui_state_t new_state) {
 	switch(new_state) {
 		case UI_HANDLE_MAIN_SCREEN:
+		ui_state = new_state;
 		ui_draw_main_screen();
 		break;
 		
 		case UI_HANDLE_SCROLLABLE_LIST:
+		ui_state = new_state;
 		ui_draw_scrollable_list();
 		break;
 	}
@@ -168,6 +170,7 @@ void ui_handle(void) {
     }
     button_handle(&next_btn);
     button_handle(&prev_btn);
+    button_handle(&state_button);
 }
 
 static void ui_handle_main_screen(void) {

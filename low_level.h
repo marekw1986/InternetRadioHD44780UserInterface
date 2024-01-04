@@ -8,28 +8,34 @@
 #define lcd_char(chr) putchar(chr)
 #define lcd_str(str) printf("%s", str);fflush(stdout)
 #define lcd_cls() system("clear");
-#define VS1003_getVolume() 50
 #define mediainfo_title_get()	"Radio Złote Przeboje Kraków"
 #define lcd_flush_buffer()
 
 #define PORTG dummy_byte
 #define PORTE dummy_byte
 
-#define _PORTG_RG13_MASK 0x01
-#define _PORTE_RE2_MASK 0x02
-#define _PORTE_RE4_MASK 0x03
+#define BUTTON_BUFFER_SIZE 7
+
+#define NO_PRESS 0x00
+#define SHORT_PRESS 0x01
+#define LONG_PRESS 0x02
+
+#define _PORTG_RG13_MASK 0x00
+#define _PORTE_RE2_MASK 0x01
+#define _PORTE_RE4_MASK 0x02
 
 typedef enum {false = 0, true} bool;
 
 typedef struct button {
-	char short_press;
-	char long_press;
+	uint8_t btn_id;
     void (*push_proc)(void);
     void (*long_proc)(void);
 } button_t;
 
+extern uint8_t button_buffer[BUTTON_BUFFER_SIZE];
 extern uint8_t dummy_byte;
 
+void low_level_init(void);
 void lcd_locate(uint8_t x, uint8_t y);
 uint32_t millis (void);
 uint16_t lcd_str_part(const char* str, const uint16_t len);
@@ -39,12 +45,13 @@ void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd);
 
 char* get_station_url_from_file(uint16_t number, char* stream_name, size_t stream_name_len);
 
-void button_init(button_t* btn, void*, uint8_t, void (*push_proc)(void), void (*long_proc)(void));
+void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void));
 void button_handle(button_t* btn);
 void rotary_init(void);
 void VS1003_play_prev(void);
 void VS1003_play_next(void);
-void VS1003_setVolume(uint8_t);
+void VS1003_setVolume(uint8_t new_volume);
+uint8_t VS1003_getVolume(void);
 int8_t rotary_handle(void);
 
 #endif // _LOW_LEVEL_H_

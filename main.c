@@ -52,17 +52,25 @@ int getch()
 int main (char** argv, int argc) {
 	set_conio_terminal_mode();
 	system("clear");
+	low_level_init();
 	ui_init();
 	while (1) {
 		if (kbhit()) {
 			int data = getch();
 			if (data >= 0) {
 				char c = (char)data;
-				lcd_locate(10, 0);
-				printf("Key pressed: %c", c);
 				fflush(stdout);
 				
 				if (c == 'q') break;
+				switch(c) {
+					case 's':
+					button_buffer[_PORTE_RE4_MASK] = SHORT_PRESS;
+					break;
+					
+					case 'S':
+					button_buffer[_PORTE_RE4_MASK] = LONG_PRESS;
+					break;
+				}
 			}
 		}
 		ui_handle();

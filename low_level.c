@@ -3,7 +3,13 @@
 #include <sys/time.h>
 #include "low_level.h"
 
+uint8_t button_buffer[BUTTON_BUFFER_SIZE];
+uint8_t vs1003_volume = 50;
 uint8_t dummy_byte = 0;
+
+void low_level_init(void) {
+	memset(button_buffer, 0x00, sizeof(button_buffer));
+}
 
 void lcd_locate(uint8_t x, uint8_t y) {
 	printf("%c[%d;%df",0x1B,x+1,y);
@@ -186,16 +192,38 @@ char* get_station_url_from_file(uint16_t number, char* stream_name, size_t strea
 	return res;
 }
 
-void button_init(button_t* btn, void*, uint8_t, void (*push_proc)(void), void (*long_proc)(void)) {
-	
+void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void)) {
+	btn->btn_id = id;
+	btn->push_proc = push_proc;
+	btn->long_proc = long_proc;
 }
 
 void button_handle(button_t* btn) {
-	
+	if (button_buffer[btn->btn_id] == SHORT_PRESS) {
+		if (btn->push_proc) {
+			btn->push_proc();
+		}
+		button_buffer[btn->btn_id] = NO_PRESS;
+	}
+	else if (button_buffer[btn->btn_id] == LONG_PRESS)
+	{
+		if (btn->long_proc) {
+			btn->long_proc();
+		}
+		button_buffer[btn->btn_id] = NO_PRESS;
+	}
 }
 
 void rotary_init(void) {}
 void VS1003_play_prev(void) {}
 void VS1003_play_next(void) {}
-void VS1003_setVolume(uint8_t) {}
+
+void VS1003_setVolume(uint8_t new_volume) {
+	vs1003_volume = new_volume;
+}
+
+uint8_t VS1003_getVolume(void) {
+	return vs1003_volume;
+}
+
 int8_t rotary_handle(void) { return 0; }
