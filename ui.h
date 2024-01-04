@@ -26,10 +26,8 @@ void ui_clear_state_info(void);
 void ui_handle(void);
 
 
-
 #ifdef	__cplusplus
 }
 #endif
 
 #endif	/* UI_H */
-

@@ -22,7 +22,7 @@
 
 #define _PORTG_RG13_MASK 0x00
 #define _PORTE_RE2_MASK 0x01
-#define _PORTE_RE4_MASK 0x02
+#define _PORTE_RE5_MASK 0x02
 
 typedef enum {false = 0, true} bool;
 
@@ -48,6 +48,7 @@ char* get_station_url_from_file(uint16_t number, char* stream_name, size_t strea
 void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void));
 void button_handle(button_t* btn);
 void rotary_init(void);
+void rotary_register_callback(void (*cbk)(int8_t));
 void VS1003_play_prev(void);
 void VS1003_play_next(void);
 void VS1003_setVolume(uint8_t new_volume);

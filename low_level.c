@@ -215,6 +215,7 @@ void button_handle(button_t* btn) {
 }
 
 void rotary_init(void) {}
+void rotary_register_callback(void (*cbk)(int8_t)) {}
 void VS1003_play_prev(void) {}
 void VS1003_play_next(void) {}
 

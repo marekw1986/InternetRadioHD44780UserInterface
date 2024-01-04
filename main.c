@@ -64,11 +64,11 @@ int main (char** argv, int argc) {
 				if (c == 'q') break;
 				switch(c) {
 					case 's':
-					button_buffer[_PORTE_RE4_MASK] = SHORT_PRESS;
+					button_buffer[_PORTE_RE5_MASK] = SHORT_PRESS;
 					break;
 					
 					case 'S':
-					button_buffer[_PORTE_RE4_MASK] = LONG_PRESS;
+					button_buffer[_PORTE_RE5_MASK] = LONG_PRESS;
 					break;
 				}
 			}
