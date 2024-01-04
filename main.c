@@ -70,11 +70,19 @@ int main (char** argv, int argc) {
 					case 'S':
 					button_buffer[_PORTE_RE5_MASK] = LONG_PRESS;
 					break;
+					
+					case 'p':
+					button_buffer[ROTARY_IND] = ROTARY_POSITIVE;
+					break;
+					
+					case 'o':
+					button_buffer[ROTARY_IND] = ROTARY_POSITIVE;
+					break;
 				}
 			}
 		}
 		ui_handle();
-		sleep(1);
+		sleep(0.1);
 	}
 	system("clear");
 	return 1;

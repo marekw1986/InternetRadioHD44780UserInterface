@@ -6,6 +6,7 @@
 uint8_t button_buffer[BUTTON_BUFFER_SIZE];
 uint8_t vs1003_volume = 50;
 uint8_t dummy_byte = 0;
+void (*rotary_cbk)(int8_t) = NULL;
 
 void low_level_init(void) {
 	memset(button_buffer, 0x00, sizeof(button_buffer));
@@ -215,7 +216,6 @@ void button_handle(button_t* btn) {
 }
 
 void rotary_init(void) {}
-void rotary_register_callback(void (*cbk)(int8_t)) {}
 void VS1003_play_prev(void) {}
 void VS1003_play_next(void) {}
 
@@ -227,4 +227,23 @@ uint8_t VS1003_getVolume(void) {
 	return vs1003_volume;
 }
 
-int8_t rotary_handle(void) { return 0; }
+void rotary_register_callback(void (*cbk)(int8_t)) {
+	if (cbk) {
+		rotary_cbk = cbk;
+	}
+}
+
+int8_t rotary_handle(void) {
+	if (button_buffer[ROTARY_IND] == ROTARY_NEGATIVE) {
+		if (rotary_cbk) {
+			rotary_cbk(-1);
+		}
+		button_buffer[ROTARY_IND] == ROTARY_NEUTRAL;
+	}
+	else if (button_buffer[ROTARY_IND] == ROTARY_POSITIVE) {
+		if (rotary_cbk) {
+			rotary_cbk(1);
+		}
+		button_buffer[ROTARY_IND] == ROTARY_NEUTRAL;		
+	}
+}

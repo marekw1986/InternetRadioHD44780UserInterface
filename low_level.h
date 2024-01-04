@@ -20,9 +20,14 @@
 #define SHORT_PRESS 0x01
 #define LONG_PRESS 0x02
 
+#define ROTARY_NEGATIVE 0x01
+#define ROTARY_POSITIVE 0x02
+#define ROTARY_NEUTRAL 0x00
+
 #define _PORTG_RG13_MASK 0x00
 #define _PORTE_RE2_MASK 0x01
 #define _PORTE_RE5_MASK 0x02
+#define ROTARY_IND 0x06
 
 typedef enum {false = 0, true} bool;
 
