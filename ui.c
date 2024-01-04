@@ -253,7 +253,7 @@ static void ui_rotary_change_volume(int8_t new_vol) {
     volume += new_vol;
     if (volume > 100) volume = 100;
     if (volume < 0) volume = 0;
-    VS1003_setVolume(volume);                
+    VS1003_setVolume(volume);
 }
 
 static void ui_rotary_move_cursor(int8_t val) {

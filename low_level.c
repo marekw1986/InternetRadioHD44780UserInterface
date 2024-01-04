@@ -2,6 +2,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include "low_level.h"
+#include "ui.h"
 
 uint8_t button_buffer[BUTTON_BUFFER_SIZE];
 uint8_t vs1003_volume = 50;
@@ -216,11 +217,16 @@ void button_handle(button_t* btn) {
 }
 
 void rotary_init(void) {}
-void VS1003_play_prev(void) {}
-void VS1003_play_next(void) {}
+void VS1003_play_prev(void) {
+	ui_update_state_info("Playing stream");
+}
+void VS1003_play_next(void) {
+	ui_update_state_info("Reconnecting");
+}
 
 void VS1003_setVolume(uint8_t new_volume) {
 	vs1003_volume = new_volume;
+	ui_update_volume();
 }
 
 uint8_t VS1003_getVolume(void) {
@@ -238,12 +244,12 @@ int8_t rotary_handle(void) {
 		if (rotary_cbk) {
 			rotary_cbk(-1);
 		}
-		button_buffer[ROTARY_IND] == ROTARY_NEUTRAL;
+		button_buffer[ROTARY_IND] = ROTARY_NEUTRAL;
 	}
 	else if (button_buffer[ROTARY_IND] == ROTARY_POSITIVE) {
 		if (rotary_cbk) {
 			rotary_cbk(1);
 		}
-		button_buffer[ROTARY_IND] == ROTARY_NEUTRAL;		
+		button_buffer[ROTARY_IND] = ROTARY_NEUTRAL;		
 	}
 }

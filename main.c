@@ -72,11 +72,19 @@ int main (char** argv, int argc) {
 					break;
 					
 					case 'p':
-					button_buffer[ROTARY_IND] = ROTARY_NEGATIVE;
+					button_buffer[ROTARY_IND] = ROTARY_POSITIVE;
 					break;
 					
 					case 'o':
-					button_buffer[ROTARY_IND] = ROTARY_POSITIVE;
+					button_buffer[ROTARY_IND] = ROTARY_NEGATIVE;
+					break;
+					
+					case 'f':
+					button_buffer[_PORTG_RG13_MASK] = SHORT_PRESS;
+					break;
+					
+					case 'g':
+					button_buffer[_PORTE_RE2_MASK] = SHORT_PRESS;
 					break;
 				}
 			}
