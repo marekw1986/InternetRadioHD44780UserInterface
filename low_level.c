@@ -9,6 +9,8 @@ uint8_t vs1003_volume = 50;
 uint8_t dummy_byte = 0;
 void (*rotary_cbk)(int8_t) = NULL;
 
+extern int32_t selected_stream_id;
+
 void low_level_init(void) {
 	memset(button_buffer, 0x00, sizeof(button_buffer));
 }
