@@ -186,12 +186,41 @@ char* get_station_url_from_file(uint16_t number, char* stream_name, size_t strea
 		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
 		break;
 		
+		case 8:
+		strncpy(stream_name, "Radio Pryzmat", stream_name_len);
+		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
+		break;
+		
+		case 9:
+		strncpy(stream_name, "Radio 357", stream_name_len);
+		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
+		break;
+		
+		case 10:
+		strncpy(stream_name, "Radio Nowy Świat", stream_name_len);
+		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
+		break;
+		
+		case 11:
+		strncpy(stream_name, "Radio Złote Przeboje", stream_name_len);
+		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
+		break;
+		
+		case 12:
+		strncpy(stream_name, "Paranormalium", stream_name_len);
+		res = "http://stream4.nadaje.com:9680/radiokrakow-s3";
+		break;										
+		
 		default:
 		strncpy(stream_name, "", stream_name_len);
 		res = NULL;
 		break;
 	}
 	return res;
+}
+
+uint16_t get_max_stream_id(void) {
+	return 12;
 }
 
 void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void)) {

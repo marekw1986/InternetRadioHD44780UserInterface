@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define LCD_ROWS 4
 #define LCD_COLS 20
 #define lcd_char(chr) putchar(chr)
 #define lcd_str(str) printf("%s", str);fflush(stdout)
@@ -49,6 +50,7 @@ void lcd_str_padd_rest(const char* str, const uint16_t len, char padd);
 void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd);
 
 char* get_station_url_from_file(uint16_t number, char* stream_name, size_t stream_name_len);
+uint16_t get_max_stream_id(void);
 
 void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void));
 void button_handle(button_t* btn);
