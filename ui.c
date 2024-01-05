@@ -282,17 +282,15 @@ static void ui_rotary_move_cursor(int8_t val) {
 	else if (selected_stream_id > get_max_stream_id()) {
 		selected_stream_id = get_max_stream_id();
 	}
-	if ( (prev_selected_line > 0) && (prev_selected_line < LCD_ROWS-1) ) {
+	if ( ((prev_selected_line == 0) && (val<0)) || ((prev_selected_line == LCD_ROWS-1) && (val > 0)) ) {
+		ui_draw_scrollable_list();
+	}
+	else  {
 		lcd_locate(prev_selected_line, 0);
 		lcd_str("  ");
 		lcd_flush_buffer();
 		ui_draw_pointer_at_line(calculate_selected_line());
 	}
-	else {
-		ui_draw_scrollable_list();
-	}
-	// ui_draw_scrollable_list();
-    // ui_draw_pointer_at_line(calculate_selected_line());
 }
 
 static void ui_button_switch_state(void) {
