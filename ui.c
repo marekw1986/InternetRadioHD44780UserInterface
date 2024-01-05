@@ -7,8 +7,6 @@
 //#include "../vs1003/vs1003.h"
 //#include "../common.h"
 
-//#define calculate_selected_line() (selected_stream_id%(LCD_ROWS+1))-1
-
 typedef enum {SCROLL, SCROLL_WAIT} scroll_state_t;
 
 static button_t next_btn;
