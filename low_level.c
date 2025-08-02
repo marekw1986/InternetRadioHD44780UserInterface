@@ -5,7 +5,7 @@
 #include "ui.h"
 
 uint8_t button_buffer[BUTTON_BUFFER_SIZE];
-uint8_t vs1003_volume = 50;
+uint8_t vs1053_volume = 50;
 uint8_t dummy_byte = 0;
 void (*rotary_cbk)(int8_t) = NULL;
 
@@ -150,7 +150,7 @@ void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd) {
 	fflush(stdout);
 }
 
-char* get_station_url_from_file(uint16_t number, char* stream_name, size_t stream_name_len) {
+char* get_station_url_from_file(uint16_t number, char* working_buffer, size_t working_buffer_len, char* stream_name, size_t stream_name_len) {
 	char* res = NULL;
 	switch(number) {
 		case 1:
@@ -248,20 +248,20 @@ void button_handle(button_t* btn) {
 }
 
 void rotary_init(void) {}
-void VS1003_play_prev(void) {
+void VS1053_play_prev(void) {
 	ui_update_state_info("Playing stream");
 }
-void VS1003_play_next(void) {
+void VS1053_play_next(void) {
 	ui_update_state_info("Reconnecting");
 }
 
-void VS1003_setVolume(uint8_t new_volume) {
-	vs1003_volume = new_volume;
+void VS1053_setVolume(uint8_t new_volume) {
+	vs1053_volume = new_volume;
 	ui_update_volume();
 }
 
-uint8_t VS1003_getVolume(void) {
-	return vs1003_volume;
+uint8_t VS1053_getVolume(void) {
+	return vs1053_volume;
 }
 
 void rotary_register_callback(void (*cbk)(int8_t)) {

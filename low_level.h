@@ -14,6 +14,7 @@
 
 #define PORTG dummy_byte
 #define PORTE dummy_byte
+#define PORTF dummy_byte
 
 #define BUTTON_BUFFER_SIZE 7
 
@@ -28,6 +29,7 @@
 #define _PORTG_RG13_MASK 0x00
 #define _PORTE_RE2_MASK 0x01
 #define _PORTE_RE5_MASK 0x02
+#define _PORTF_RF2_MASK 0x03
 #define ROTARY_IND 0x06
 
 typedef enum {false = 0, true} bool;
@@ -49,17 +51,17 @@ uint16_t lcd_utf8str_part(const char* str, const uint16_t len);
 void lcd_str_padd_rest(const char* str, const uint16_t len, char padd);
 void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd);
 
-char* get_station_url_from_file(uint16_t number, char* stream_name, size_t stream_name_len);
+char* get_station_url_from_file(uint16_t number, char* working_buffer, size_t working_buffer_len, char* stream_name, size_t stream_name_len);
 uint16_t get_max_stream_id(void);
 
 void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void));
 void button_handle(button_t* btn);
 void rotary_init(void);
 void rotary_register_callback(void (*cbk)(int8_t));
-void VS1003_play_prev(void);
-void VS1003_play_next(void);
-void VS1003_setVolume(uint8_t new_volume);
-uint8_t VS1003_getVolume(void);
+void VS1053_play_prev(void);
+void VS1053_play_next(void);
+void VS1053_setVolume(uint8_t new_volume);
+uint8_t VS1053_getVolume(void);
 int8_t rotary_handle(void);
 
 #endif // _LOW_LEVEL_H_

@@ -8,8 +8,6 @@
 #ifndef UI_H
 #define	UI_H
 
-#include <stdint.h>
-
 typedef enum {UI_HANDLE_MAIN_SCREEN, UI_HANDLE_SCROLLABLE_LIST} ui_state_t;
 
 #ifdef	__cplusplus
@@ -32,3 +30,4 @@ void ui_handle(void);
 #endif
 
 #endif	/* UI_H */
+
