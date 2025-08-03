@@ -86,6 +86,10 @@ int main (char** argv, int argc) {
 					case 'g':
 					button_buffer[_PORTE_RE2_MASK] = SHORT_PRESS;
 					break;
+					
+					case 'y':
+					button_buffer[_PORTF_RF2_MASK] = SHORT_PRESS;
+					break;
 				}
 			}
 		}

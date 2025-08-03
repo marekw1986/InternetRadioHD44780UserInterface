@@ -64,6 +64,7 @@ void ui_init(void) {
 
 void ui_switch_state(ui_state_t new_state) {
     scroll_info = false;    // Reset scrolling after every change of state
+    scrollable_list_set_selected_item_id(1);
 	switch(new_state) {
 		case UI_HANDLE_PLAY_SCREEN:
         ui_state = new_state;
@@ -80,7 +81,7 @@ void ui_switch_state(ui_state_t new_state) {
 		rotary_register_callback(scrollable_list_move_cursor);
         button_register_push_callback(&prev_btn, NULL);
         button_register_push_callback(&next_btn, NULL);
-        button_register_push_callback(&rotary_button, NULL);
+        button_register_push_callback(&rotary_button, main_list_perform_action);
 		draw_scrollable_list();		
 		break;
 		
@@ -278,7 +279,7 @@ static void ui_rotary_change_volume(int8_t new_vol) {
 
 static void ui_button_switch_state(void) {
     if (ui_state == UI_HANDLE_PLAY_SCREEN) {
-        ui_switch_state(UI_HANDLE_STREAM_LIST);
+        ui_switch_state(UI_HANDLE_MAIN_LIST);
     }
     else {
         ui_switch_state(UI_HANDLE_PLAY_SCREEN);
