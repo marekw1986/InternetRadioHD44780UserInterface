@@ -31,7 +31,7 @@ static bool scroll_right = true;
 static const char* scroll_begin;
 static const char* scroll_ptr;
 
-static int32_t selected_stream_id = 1;
+static int32_t selected_item_id = 1;
 static int32_t cur_pos = 0;
 static uint8_t currently_drawn_line=0;
 static bool drawing_scrollable_list_active = false;
@@ -93,13 +93,13 @@ void ui_switch_state(ui_state_t new_state) {
 	}
 }
 
-void ui_set_selected_stream_id(uint16_t id) {
+void ui_set_selected_item_id(uint16_t id) {
 	if (id > get_max_stream_id()) return;
-	selected_stream_id = id;
+	selected_item_id = id;
 }
 
 static uint8_t calculate_selected_line(void) {
-	uint8_t selected_line = (selected_stream_id%(LCD_ROWS));
+	uint8_t selected_line = (selected_item_id%(LCD_ROWS));
 	selected_line = selected_line ? selected_line-1 : LCD_ROWS-1;
 	return selected_line;
 }
@@ -220,19 +220,19 @@ static void ui_handle_main_screen(void) {
 static void ui_handle_scrollable_list(void) {
     if (drawing_scrollable_list_active) {
         uint8_t selected_line = calculate_selected_line();
-        uint8_t stream_at_first_line = selected_stream_id-selected_line;
+        uint8_t item_at_first_line = selected_item_id-selected_line;
         char name[22];
         char buf[24];
         char* url = NULL;
         char working_buffer[512];
-        url = get_station_url_from_file(stream_at_first_line+currently_drawn_line, working_buffer, sizeof(working_buffer), name, sizeof(name));
+        url = get_station_url_from_file(item_at_first_line+currently_drawn_line, working_buffer, sizeof(working_buffer), name, sizeof(name));
         if (url != NULL) {
             int bytes_in_buffer;
             if (currently_drawn_line == selected_line) {
-                bytes_in_buffer = snprintf(buf, sizeof(buf), "%s%d %s", ">", stream_at_first_line+currently_drawn_line, name);
+                bytes_in_buffer = snprintf(buf, sizeof(buf), "%s%d %s", ">", item_at_first_line+currently_drawn_line, name);
             }
             else {
-                bytes_in_buffer = snprintf(buf, sizeof(buf), "%s%d %s", " ", stream_at_first_line+currently_drawn_line, name);
+                bytes_in_buffer = snprintf(buf, sizeof(buf), "%s%d %s", " ", item_at_first_line+currently_drawn_line, name);
             }
             if (bytes_in_buffer > 0) {
                 lcd_locate(currently_drawn_line, 0);
@@ -332,15 +332,15 @@ static void ui_rotary_change_volume(int8_t new_vol) {
 
 static void ui_rotary_move_cursor(int8_t val) {
 	uint8_t prev_selected_line = calculate_selected_line();
-    uint16_t prev_selected_stream_id = selected_stream_id;
-	selected_stream_id += val;
-	if (selected_stream_id < 1) {
-		selected_stream_id = get_max_stream_id();
+    uint16_t prev_selected_item_id = selected_item_id;
+	selected_item_id += val;
+	if (selected_item_id < 1) {
+		selected_item_id = get_max_stream_id();
 	}
-	else if (selected_stream_id > get_max_stream_id()) {
-		selected_stream_id = 1;
+	else if (selected_item_id > get_max_stream_id()) {
+		selected_item_id = 1;
 	}
-	if ( ((prev_selected_line == 0) && (val<0)) || ( ((prev_selected_line == LCD_ROWS-1) || (prev_selected_stream_id == get_max_stream_id())) && (val > 0)) ) {
+	if ( ((prev_selected_line == 0) && (val<0)) || ( ((prev_selected_line == LCD_ROWS-1) || (prev_selected_item_id == get_max_stream_id())) && (val > 0)) ) {
         ui_draw_scrollable_list();
 	}
 	else  {
@@ -362,23 +362,23 @@ static void ui_button_switch_state(void) {
 static void ui_button_play_selected_stream(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
     ui_switch_state(UI_HANDLE_MAIN_SCREEN);
-    VS1053_play_http_stream_by_id(selected_stream_id);
+    VS1053_play_http_stream_by_id(selected_item_id);
 }
 
 static void ui_button_stream_list_next_page(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
-    selected_stream_id += LCD_ROWS;
-    if (selected_stream_id > get_max_stream_id()) {
-        selected_stream_id = 1;
+    selected_item_id += LCD_ROWS;
+    if (selected_item_id > get_max_stream_id()) {
+        selected_item_id = 1;
     }
     ui_draw_scrollable_list();
 }
 
 static void ui_button_stream_list_prev_page(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
-    selected_stream_id -= LCD_ROWS;
-    if (selected_stream_id < 1) {
-        selected_stream_id = get_max_stream_id();
+    selected_item_id -= LCD_ROWS;
+    if (selected_item_id < 1) {
+        selected_item_id = get_max_stream_id();
     }
     ui_draw_scrollable_list();
 }
