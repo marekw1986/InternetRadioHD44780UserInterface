@@ -46,8 +46,10 @@ void handle_scrollable_list(void) {
     }
 }
 
-void scrollable_list_set_callbacks(const scrollable_list_callbacks_t cbks) {
-	callbacks = cbks;
+void scrollable_list_set_callbacks(const scrollable_list_get_content_t content_cbk, const scrollable_list_get_max_item_id_t max_id_cbk, const scrollable_list_perform_action_t action_cbk) {
+	callbacks.get_content = content_cbk;
+	callbacks.get_max_item_id = max_id_cbk;
+	callbacks.perform_action = action_cbk;
 }
 
 void draw_scrollable_list(void) {

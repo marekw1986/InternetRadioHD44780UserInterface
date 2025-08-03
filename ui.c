@@ -74,10 +74,7 @@ void ui_switch_state(ui_state_t new_state) {
 		
 		case UI_HANDLE_SCROLLABLE_LIST:
         ui_state = new_state;
-        scrollable_list_callbacks_t cbks;
-        cbks.get_content = get_station_url_from_file;
-        cbks.get_max_item_id = get_max_stream_id;
-        scrollable_list_set_callbacks(cbks);
+        scrollable_list_set_callbacks(get_station_url_from_file, get_max_stream_id, NULL);
         rotary_register_callback(scrollable_list_move_cursor);
         button_register_push_callback(&prev_btn, ui_button_stream_list_prev_page);
         button_register_push_callback(&next_btn, ui_button_stream_list_next_page);
