@@ -8,7 +8,7 @@
 #ifndef UI_H
 #define	UI_H
 
-typedef enum {UI_HANDLE_MAIN_SCREEN, UI_HANDLE_SCROLLABLE_LIST} ui_state_t;
+typedef enum {UI_HANDLE_PLAY_SCREEN, UI_HANDLE_SCROLLABLE_LIST} ui_state_t;
 
 #ifdef	__cplusplus
 extern "C" {

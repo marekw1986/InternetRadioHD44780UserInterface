@@ -23,7 +23,7 @@ static button_t state_button;
 static button_t rotary_button;
 
 static uint32_t backlight_timer = 0;
-static ui_state_t ui_state = UI_HANDLE_MAIN_SCREEN;
+static ui_state_t ui_state = UI_HANDLE_PLAY_SCREEN;
 static scroll_state_t scroll_state = SCROLL_WAIT;
 static uint32_t scroll_timer;
 static bool scroll_info = false;
@@ -32,7 +32,7 @@ static const char* scroll_begin;
 static const char* scroll_ptr;
 
 static void ui_draw_main_screen(void);
-static void ui_handle_main_screen(void);
+static void ui_handle_play_screen(void);
 static void ui_handle_backlight(void);
 static void ui_handle_updating_time(void);
 static void ui_handle_scroll(void);
@@ -56,14 +56,14 @@ void ui_init(void) {
     
     backlight_timer = millis();
     
-	ui_state = UI_HANDLE_MAIN_SCREEN;
+	ui_state = UI_HANDLE_PLAY_SCREEN;
 	ui_draw_main_screen();
 }
 
 void ui_switch_state(ui_state_t new_state) {
     scroll_info = false;    // Reset scrolling after every change of state
 	switch(new_state) {
-		case UI_HANDLE_MAIN_SCREEN:
+		case UI_HANDLE_PLAY_SCREEN:
         ui_state = new_state;
         rotary_register_callback(ui_rotary_change_volume);
         button_register_push_callback(&prev_btn, VS1053_play_prev);
@@ -84,7 +84,7 @@ void ui_switch_state(ui_state_t new_state) {
 }
 
 static void ui_draw_main_screen(void) {
-	if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+	if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     lcd_cls();
 	ui_update_content_info(mediainfo_title_get());
     const char* state_description = VS1053_get_state_description();
@@ -102,7 +102,7 @@ static void ui_draw_main_screen(void) {
 void ui_update_volume(void) {
     char supbuf[16];
     
-    if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+    if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     uint8_t volume = VS1053_getVolume();
     snprintf(supbuf, sizeof(supbuf)-1, "%d%s", volume, (volume < 100) ? " " : "");
     lcd_locate(3, 8);
@@ -110,7 +110,7 @@ void ui_update_volume(void) {
 }
 
 void ui_update_content_info(const char* str) {
-	if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+	if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     if (strlen(str) <= LCD_COLS) {
         lcd_locate(1, 0);
         uint8_t rest = lcd_utf8str_part(str, LCD_COLS);
@@ -131,7 +131,7 @@ void ui_update_content_info(const char* str) {
 }
 
 void ui_clear_content_info(void) {
-	if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+	if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     scroll_info = false;
     lcd_locate(1, 0);
     for (int i=0; i<LCD_COLS; i++) {
@@ -140,7 +140,7 @@ void ui_clear_content_info(void) {
 }
 
 void ui_update_state_info(const char* str) {
-	if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+	if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     ui_clear_state_info();
     if (str) {
         lcd_locate(2,0);
@@ -152,7 +152,7 @@ void ui_update_state_info(const char* str) {
 }
 
 void ui_clear_state_info(void) {
-	if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+	if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     lcd_locate(2, 0);
     for (int i=0; i<LCD_COLS; i++) {
         lcd_char(' ');
@@ -161,8 +161,8 @@ void ui_clear_state_info(void) {
 
 void ui_handle(void) {
     switch(ui_state) {
-		case UI_HANDLE_MAIN_SCREEN:
-		ui_handle_main_screen();
+		case UI_HANDLE_PLAY_SCREEN:
+		ui_handle_play_screen();
 		break;
 		
 		case UI_HANDLE_SCROLLABLE_LIST:
@@ -177,7 +177,7 @@ void ui_handle(void) {
     button_handle(&rotary_button);
 }
 
-static void ui_handle_main_screen(void) {
+static void ui_handle_play_screen(void) {
     ui_handle_scroll();
     ui_handle_updating_time();	
 }
@@ -243,7 +243,7 @@ void ui_handle_updating_time(void) {
     time_t rawtime = time(NULL);
     struct tm* current_time = localtime(&rawtime);
     
-    if (ui_state != UI_HANDLE_MAIN_SCREEN) { return; }
+    if (ui_state != UI_HANDLE_PLAY_SCREEN) { return; }
     if (current_time->tm_sec != last_second) {
         last_second = current_time->tm_sec;
         char supbuf[32];
@@ -263,17 +263,17 @@ static void ui_rotary_change_volume(int8_t new_vol) {
 }
 
 static void ui_button_switch_state(void) {
-    if (ui_state == UI_HANDLE_MAIN_SCREEN) {
+    if (ui_state == UI_HANDLE_PLAY_SCREEN) {
         ui_switch_state(UI_HANDLE_SCROLLABLE_LIST);
     }
     else {
-        ui_switch_state(UI_HANDLE_MAIN_SCREEN);
+        ui_switch_state(UI_HANDLE_PLAY_SCREEN);
     }
 }
 
 static void ui_button_play_selected_stream(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
-    ui_switch_state(UI_HANDLE_MAIN_SCREEN);
+    ui_switch_state(UI_HANDLE_PLAY_SCREEN);
     VS1053_play_http_stream_by_id(scrollable_list_get_selected_item_id());
 }
 
