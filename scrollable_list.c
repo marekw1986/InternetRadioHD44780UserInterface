@@ -2,11 +2,11 @@
 #include "scrollable_list.h"
 #include "low_level.h"
 
-
 static bool drawing_scrollable_list_active = false;
 static uint8_t currently_drawn_line=0;
 static int32_t selected_item_id = 1;
 static int32_t cur_pos = 0;
+static scrollable_list_callbacks_t callbacks;
 
 static uint8_t calculate_selected_line(void);
 static void draw_pointer_at_line(uint8_t line);
@@ -20,7 +20,8 @@ void handle_scrollable_list(void) {
         char buf[24];
         char* url = NULL;
         char working_buffer[512];
-        url = get_station_url_from_file(item_at_first_line+currently_drawn_line, working_buffer, sizeof(working_buffer), name, sizeof(name));
+        if (callbacks.get_content == NULL) { return; }
+        url = callbacks.get_content(item_at_first_line+currently_drawn_line, working_buffer, sizeof(working_buffer), name, sizeof(name));
         if (url != NULL) {
             int bytes_in_buffer;
             if (currently_drawn_line == selected_line) {
@@ -45,6 +46,10 @@ void handle_scrollable_list(void) {
     }
 }
 
+void scrollable_list_set_callbacks(const scrollable_list_callbacks_t cbks) {
+	callbacks = cbks;
+}
+
 void draw_scrollable_list(void) {
     lcd_cls();
     cur_pos = 0;
@@ -62,13 +67,14 @@ void scrollable_list_move_cursor(int8_t val) {
 	uint8_t prev_selected_line = calculate_selected_line();
     uint16_t prev_selected_item_id = selected_item_id;
 	selected_item_id += val;
+	if (callbacks.get_max_item_id == NULL) { return; }
 	if (selected_item_id < 1) {
-		selected_item_id = get_max_stream_id();
+		selected_item_id = callbacks.get_max_item_id();
 	}
-	else if (selected_item_id > get_max_stream_id()) {
+	else if (selected_item_id > callbacks.get_max_item_id()) {
 		selected_item_id = 1;
 	}
-	if ( ((prev_selected_line == 0) && (val<0)) || ( ((prev_selected_line == LCD_ROWS-1) || (prev_selected_item_id == get_max_stream_id())) && (val > 0)) ) {
+	if ( ((prev_selected_line == 0) && (val<0)) || ( ((prev_selected_line == LCD_ROWS-1) || (prev_selected_item_id == callbacks.get_max_item_id())) && (val > 0)) ) {
         draw_scrollable_list();
 	}
 	else  {
@@ -85,7 +91,8 @@ static void draw_pointer_at_line(uint8_t line) {
 }
 
 void scrollable_list_set_selected_item_id(uint16_t id) {
-	if (id > get_max_stream_id()) return;
+	if (callbacks.get_max_item_id == NULL) { return; }
+	if (id > callbacks.get_max_item_id()) return;
 	selected_item_id = id;
 }
 
