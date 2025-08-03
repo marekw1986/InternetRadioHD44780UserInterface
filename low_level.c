@@ -26,6 +26,11 @@ uint32_t millis (void) {
   return t.tv_sec * 1000 + ( t.tv_usec + 500 ) / 1000 ;
 }
 
+void lcd_char(char chr) {
+	putchar(chr);
+	fflush(stdout);
+}
+
 uint16_t lcd_str_part(const char* str, const uint16_t len) {
     register char znak;
     uint16_t cnt = 0;

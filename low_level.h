@@ -6,7 +6,7 @@
 
 #define LCD_ROWS 4
 #define LCD_COLS 20
-#define lcd_char(chr) putchar(chr)
+//#define lcd_char(chr) putchar(chr)
 #define lcd_str(str) printf("%s", str);fflush(stdout)
 #define lcd_cls() system("clear");
 #define mediainfo_title_get()	"Radio Złote Przeboje Kraków"
@@ -46,6 +46,7 @@ extern uint8_t dummy_byte;
 void low_level_init(void);
 void lcd_locate(uint8_t x, uint8_t y);
 uint32_t millis (void);
+void lcd_char(char chr);
 uint16_t lcd_str_part(const char* str, const uint16_t len);
 uint16_t lcd_utf8str_part(const char* str, const uint16_t len);
 void lcd_str_padd_rest(const char* str, const uint16_t len, char padd);
