@@ -2,17 +2,20 @@
 #include <stdint.h>
 #include <time.h>
 #include <string.h>
-#include "hd44780.h"
 #include "ui.h"
 #include "main_list.h"
 #include "scrollable_list.h"
+#ifdef PCDEBUG
 #include "low_level.h"
-//#include "../vs1053/vs1053.h"
-//#include "../vs1053/mediainfo.h"
-//#include "../io/buttons.h"
-//#include "../io/rotary.h"
-//#include "../common.h"
-//#include "../stream_list.h"
+#else
+#include "hd44780.h"
+#include "../vs1053/vs1053.h"
+#include "../vs1053/mediainfo.h"
+#include "../io/buttons.h"
+#include "../io/rotary.h"
+#include "../common.h"
+#include "../stream_list.h"
+#endif
 
 #define BACKLIGHT_DURATION 10000
 
