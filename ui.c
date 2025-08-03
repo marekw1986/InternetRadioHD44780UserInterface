@@ -73,12 +73,22 @@ void ui_switch_state(ui_state_t new_state) {
 		ui_draw_main_screen();
 		break;
 		
+		case UI_HANDLE_MAIN_LIST:
+		ui_state = new_state;
+		scrollable_list_set_callbacks(NULL, NULL, NULL);
+		rotary_register_callback(scrollable_list_move_cursor);
+        button_register_push_callback(&prev_btn, NULL);
+        button_register_push_callback(&next_btn, NULL);
+        button_register_push_callback(&rotary_button, NULL);
+		draw_scrollable_list();		
+		break;
+		
 		case UI_HANDLE_STREAM_LIST:
         ui_state = new_state;
         scrollable_list_set_callbacks(get_station_url_from_file, get_max_stream_id, NULL);
         rotary_register_callback(scrollable_list_move_cursor);
-        button_register_push_callback(&prev_btn, ui_button_stream_list_prev_page);
-        button_register_push_callback(&next_btn, ui_button_stream_list_next_page);
+        button_register_push_callback(&prev_btn, scrollable_list_prev_page);
+        button_register_push_callback(&next_btn, scrollable_list_next_page);
         button_register_push_callback(&rotary_button, play_selected_stream);
 		draw_scrollable_list();
 		break;
@@ -277,26 +287,6 @@ static void play_selected_stream(void) {
     if (ui_state != UI_HANDLE_STREAM_LIST) { return; }
     ui_switch_state(UI_HANDLE_PLAY_SCREEN);
     VS1053_play_http_stream_by_id(scrollable_list_get_selected_item_id());
-}
-
-static void ui_button_stream_list_next_page(void) {
-    if (ui_state != UI_HANDLE_STREAM_LIST) { return; }
-    scrollable_list_increment_selected_item_id_by_lcd_rows();
-    if (scrollable_list_get_selected_item_id() > get_max_stream_id()) {
-        scrollable_list_set_selected_item_id(1);
-    }
-	if (ui_state != UI_HANDLE_STREAM_LIST) { return; }
-    draw_scrollable_list();
-}
-
-static void ui_button_stream_list_prev_page(void) {
-    if (ui_state != UI_HANDLE_STREAM_LIST) { return; }
-    scrollable_list_decrement_selected_item_id_by_lcd_rows();
-    if (scrollable_list_get_selected_item_id() < 1) {
-        scrollable_list_set_selected_item_id(get_max_stream_id());
-    }
-    if (ui_state != UI_HANDLE_STREAM_LIST) { return; }
-    draw_scrollable_list();
 }
 
 static void ui_button_update_backlight() {

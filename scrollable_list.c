@@ -10,6 +10,8 @@ static scrollable_list_callbacks_t callbacks;
 
 static uint8_t calculate_selected_line(void);
 static void draw_pointer_at_line(uint8_t line);
+inline static void scrollable_list_increment_selected_item_id_by_lcd_rows(void);
+inline static void scrollable_list_decrement_selected_item_id_by_lcd_rows(void);
 
 
 void handle_scrollable_list(void) {
@@ -102,10 +104,28 @@ int32_t scrollable_list_get_selected_item_id(void) {
 	return selected_item_id;
 }
 
-void scrollable_list_increment_selected_item_id_by_lcd_rows(void) {
+inline static void scrollable_list_increment_selected_item_id_by_lcd_rows(void) {
 	selected_item_id += LCD_ROWS;
 }
 
-void scrollable_list_decrement_selected_item_id_by_lcd_rows(void) {
+inline static void scrollable_list_decrement_selected_item_id_by_lcd_rows(void) {
 	selected_item_id -= LCD_ROWS;
+}
+
+void scrollable_list_next_page(void) {
+	if (callbacks.get_max_item_id) { return; }
+    scrollable_list_increment_selected_item_id_by_lcd_rows();
+    if (scrollable_list_get_selected_item_id() > callbacks.get_max_item_id()) {
+        scrollable_list_set_selected_item_id(1);
+    }
+    draw_scrollable_list();
+}
+
+void scrollable_list_prev_page(void) {
+	if (callbacks.get_max_item_id) { return; }
+    scrollable_list_decrement_selected_item_id_by_lcd_rows();
+    if (scrollable_list_get_selected_item_id() < 1) {
+        scrollable_list_set_selected_item_id(callbacks.get_max_item_id());
+    }
+    draw_scrollable_list();
 }
