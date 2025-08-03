@@ -13,4 +13,4 @@ main:
 	gcc -c main.c -o main.o
 
 clean:
-	rm -rf low_level.o ui.o main.o test
+	rm -rf *.o test

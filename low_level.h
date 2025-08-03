@@ -62,6 +62,12 @@ void VS1053_play_prev(void);
 void VS1053_play_next(void);
 void VS1053_setVolume(uint8_t new_volume);
 uint8_t VS1053_getVolume(void);
+char* VS1053_get_state_description(void);
+void VS1053_play_http_stream_by_id(const uint16_t selected_stream_id);
 int8_t rotary_handle(void);
+void button_register_push_callback(button_t *btn, void (*push_proc)(void));
+void button_register_long_callback(button_t *btn, void (*long_proc)(void));
+void button_register_global_callback(void (*cbk)(void));
+void lcd_set_backlight_state(uint8_t newState);
 
 #endif // _LOW_LEVEL_H_

@@ -264,6 +264,14 @@ uint8_t VS1053_getVolume(void) {
 	return vs1053_volume;
 }
 
+char* VS1053_get_state_description(void) {
+	return "VS1053 FSM state";
+}
+
+void VS1053_play_http_stream_by_id(const uint16_t selected_stream_id) {
+
+}
+
 void rotary_register_callback(void (*cbk)(int8_t)) {
 	if (cbk) {
 		rotary_cbk = cbk;
@@ -283,4 +291,20 @@ int8_t rotary_handle(void) {
 		}
 		button_buffer[ROTARY_IND] = ROTARY_NEUTRAL;		
 	}
+}
+
+void button_register_push_callback(button_t *btn, void (*push_proc)(void)) {
+    btn->push_proc = push_proc;
+}
+
+void button_register_long_callback(button_t *btn, void (*long_proc)(void)) {
+    btn->long_proc = long_proc;
+}
+
+void button_register_global_callback(void (*cbk)(void)) {
+    //any_proc = cbk;
+}
+
+void lcd_set_backlight_state(uint8_t newState) {
+	
 }
