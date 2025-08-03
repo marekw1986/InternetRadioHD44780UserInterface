@@ -46,8 +46,6 @@ static void play_selected_stream(void);
 //Button functions
 static void ui_rotary_change_volume(int8_t new_vol);
 static void ui_button_switch_state(void);
-static void ui_button_stream_list_next_page(void);
-static void ui_button_stream_list_prev_page(void);
 static void ui_button_update_backlight();
 
 void ui_init(void) {

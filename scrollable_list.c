@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include "scrollable_list.h"
+#ifdef PCDEBUG
 #include "low_level.h"
+#else
+#include "hd44780.h"
+#include "../common.h"
+#endif
 
 static bool drawing_scrollable_list_active = false;
 static uint8_t currently_drawn_line=0;
