@@ -4,6 +4,7 @@
 #include <string.h>
 #include "hd44780.h"
 #include "ui.h"
+#include "scrollable_list.h"
 #include "low_level.h"
 //#include "../vs1053/vs1053.h"
 //#include "../vs1053/mediainfo.h"
@@ -22,7 +23,6 @@ static button_t state_button;
 static button_t rotary_button;
 
 static uint32_t backlight_timer = 0;
-
 static ui_state_t ui_state = UI_HANDLE_MAIN_SCREEN;
 static scroll_state_t scroll_state = SCROLL_WAIT;
 static uint32_t scroll_timer;
@@ -31,24 +31,14 @@ static bool scroll_right = true;
 static const char* scroll_begin;
 static const char* scroll_ptr;
 
-static int32_t selected_item_id = 1;
-static int32_t cur_pos = 0;
-static uint8_t currently_drawn_line=0;
-static bool drawing_scrollable_list_active = false;
-
-static uint8_t calculate_selected_line(void);
 static void ui_draw_main_screen(void);
-static void ui_draw_scrollable_list(void);
 static void ui_handle_main_screen(void);
-static void ui_handle_scrollable_list(void);
 static void ui_handle_backlight(void);
-static void ui_draw_pointer_at_line(uint8_t line);
 static void ui_handle_updating_time(void);
 static void ui_handle_scroll(void);
 
 //Button functions
 static void ui_rotary_change_volume(int8_t new_vol);
-static void ui_rotary_move_cursor(int8_t val);
 static void ui_button_switch_state(void);
 static void ui_button_play_selected_stream(void);
 static void ui_button_stream_list_next_page(void);
@@ -84,24 +74,13 @@ void ui_switch_state(ui_state_t new_state) {
 		
 		case UI_HANDLE_SCROLLABLE_LIST:
         ui_state = new_state;
-        rotary_register_callback(ui_rotary_move_cursor);
+        rotary_register_callback(scrollable_list_move_cursor);
         button_register_push_callback(&prev_btn, ui_button_stream_list_prev_page);
         button_register_push_callback(&next_btn, ui_button_stream_list_next_page);
         button_register_push_callback(&rotary_button, ui_button_play_selected_stream);
-		ui_draw_scrollable_list();
+		draw_scrollable_list();
 		break;
 	}
-}
-
-void ui_set_selected_item_id(uint16_t id) {
-	if (id > get_max_stream_id()) return;
-	selected_item_id = id;
-}
-
-static uint8_t calculate_selected_line(void) {
-	uint8_t selected_line = (selected_item_id%(LCD_ROWS));
-	selected_line = selected_line ? selected_line-1 : LCD_ROWS-1;
-	return selected_line;
 }
 
 static void ui_draw_main_screen(void) {
@@ -118,20 +97,6 @@ static void ui_draw_main_screen(void) {
     lcd_locate(3, 0);
     lcd_str("Volume: ");
     ui_update_volume();
-}
-
-static void ui_draw_scrollable_list(void) {
-    if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
-    lcd_cls();
-    cur_pos = 0;
-    currently_drawn_line=0;
-    drawing_scrollable_list_active = true;
-}
-
-static void ui_draw_pointer_at_line(uint8_t line) {
-	if (line > 3) { return; }
-	lcd_locate(line, 0);
-	lcd_char('>');
 }
 
 void ui_update_volume(void) {
@@ -201,7 +166,7 @@ void ui_handle(void) {
 		break;
 		
 		case UI_HANDLE_SCROLLABLE_LIST:
-		ui_handle_scrollable_list();
+		handle_scrollable_list();
 		break;
 	}
     ui_handle_backlight();
@@ -215,39 +180,6 @@ void ui_handle(void) {
 static void ui_handle_main_screen(void) {
     ui_handle_scroll();
     ui_handle_updating_time();	
-}
-
-static void ui_handle_scrollable_list(void) {
-    if (drawing_scrollable_list_active) {
-        uint8_t selected_line = calculate_selected_line();
-        uint8_t item_at_first_line = selected_item_id-selected_line;
-        char name[22];
-        char buf[24];
-        char* url = NULL;
-        char working_buffer[512];
-        url = get_station_url_from_file(item_at_first_line+currently_drawn_line, working_buffer, sizeof(working_buffer), name, sizeof(name));
-        if (url != NULL) {
-            int bytes_in_buffer;
-            if (currently_drawn_line == selected_line) {
-                bytes_in_buffer = snprintf(buf, sizeof(buf), "%s%d %s", ">", item_at_first_line+currently_drawn_line, name);
-            }
-            else {
-                bytes_in_buffer = snprintf(buf, sizeof(buf), "%s%d %s", " ", item_at_first_line+currently_drawn_line, name);
-            }
-            if (bytes_in_buffer > 0) {
-                lcd_locate(currently_drawn_line, 0);
-                lcd_utf8str_padd_rest(buf, LCD_COLS, ' ');
-            }
-            currently_drawn_line++;
-        }
-        else {
-            drawing_scrollable_list_active = false;
-        }
-        if (currently_drawn_line >= LCD_ROWS) {
-            cur_pos = 0;
-            drawing_scrollable_list_active = false;
-        }
-    }
 }
 
 static void ui_handle_backlight(void) {
@@ -330,26 +262,6 @@ static void ui_rotary_change_volume(int8_t new_vol) {
     VS1053_setVolume(volume);
 }
 
-static void ui_rotary_move_cursor(int8_t val) {
-	uint8_t prev_selected_line = calculate_selected_line();
-    uint16_t prev_selected_item_id = selected_item_id;
-	selected_item_id += val;
-	if (selected_item_id < 1) {
-		selected_item_id = get_max_stream_id();
-	}
-	else if (selected_item_id > get_max_stream_id()) {
-		selected_item_id = 1;
-	}
-	if ( ((prev_selected_line == 0) && (val<0)) || ( ((prev_selected_line == LCD_ROWS-1) || (prev_selected_item_id == get_max_stream_id())) && (val > 0)) ) {
-        ui_draw_scrollable_list();
-	}
-	else  {
-		lcd_locate(prev_selected_line, 0);
-		lcd_char(' ');
-		ui_draw_pointer_at_line(calculate_selected_line());
-	}
-}
-
 static void ui_button_switch_state(void) {
     if (ui_state == UI_HANDLE_MAIN_SCREEN) {
         ui_switch_state(UI_HANDLE_SCROLLABLE_LIST);
@@ -362,25 +274,27 @@ static void ui_button_switch_state(void) {
 static void ui_button_play_selected_stream(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
     ui_switch_state(UI_HANDLE_MAIN_SCREEN);
-    VS1053_play_http_stream_by_id(selected_item_id);
+    VS1053_play_http_stream_by_id(scrollable_list_get_selected_item_id());
 }
 
 static void ui_button_stream_list_next_page(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
-    selected_item_id += LCD_ROWS;
-    if (selected_item_id > get_max_stream_id()) {
-        selected_item_id = 1;
+    scrollable_list_increment_selected_item_id_by_lcd_rows();
+    if (scrollable_list_get_selected_item_id() > get_max_stream_id()) {
+        scrollable_list_set_selected_item_id(1);
     }
-    ui_draw_scrollable_list();
+	if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
+    draw_scrollable_list();
 }
 
 static void ui_button_stream_list_prev_page(void) {
     if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
-    selected_item_id -= LCD_ROWS;
-    if (selected_item_id < 1) {
-        selected_item_id = get_max_stream_id();
+    scrollable_list_decrement_selected_item_id_by_lcd_rows();
+    if (scrollable_list_get_selected_item_id() < 1) {
+        scrollable_list_set_selected_item_id(get_max_stream_id());
     }
-    ui_draw_scrollable_list();
+    if (ui_state != UI_HANDLE_SCROLLABLE_LIST) { return; }
+    draw_scrollable_list();
 }
 
 static void ui_button_update_backlight() {
