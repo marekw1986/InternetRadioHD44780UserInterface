@@ -226,6 +226,77 @@ char* get_station_url_from_file(uint16_t number, char* working_buffer, size_t wo
 	return res;
 }
 
+char* get_file_path_from_audio_file_id(uint16_t number, char* working_buffer, size_t working_buffer_len, char* stream_name, size_t stream_name_len) {
+	char* res = NULL;
+	switch(number) {
+		case 1:
+		strncpy(stream_name, "Queen - Kind of Magic.mp3", stream_name_len);
+		res = "jeden";
+		break;
+		
+		case 2:
+		strncpy(stream_name, "Creed - My Sacrifice.mp3", stream_name_len);
+		res = "dwa";
+		break;
+		
+		case 3:
+		strncpy(stream_name, "The Cranberries - Zombie.mp3", stream_name_len);
+		res = "trzy";
+		break;
+		
+		case 4:
+		strncpy(stream_name, "Pixies - Where is my mind.aac", stream_name_len);
+		res = "cztery";
+		break;
+		
+		case 5:
+		strncpy(stream_name, "Frank Turner - Ballad of me and my friends.mp3", stream_name_len);
+		res = "piec";
+		break;
+		
+		case 6:
+		strncpy(stream_name, "Czeslaw Niemen - Dziwny jest ten swiat.mp3", stream_name_len);
+		res = "szesc";
+		break;
+		
+		case 7:
+		strncpy(stream_name, "Against Me! - I was a teenage anarchist.mp3", stream_name_len);
+		res = "siedem";
+		break;
+		
+		case 8:
+		strncpy(stream_name, "Phantom Planet - California.mp3", stream_name_len);
+		res = "osiem";
+		break;
+		
+		case 9:
+		strncpy(stream_name, "SAMURAI - Never fade away.mp3", stream_name_len);
+		res = "dziewiec";
+		break;
+		
+		case 10:
+		strncpy(stream_name, "Lifehouse - Whatever it takes.mp3", stream_name_len);
+		res = "dziesiec";
+		break;
+		
+		case 11:
+		strncpy(stream_name, "Pearl Jam - Once.mp3", stream_name_len);
+		res = "jedenascie";
+		break;
+		
+		case 12:
+		strncpy(stream_name, "Bad Religion - Sorrow.mp3", stream_name_len);
+		res = "dwanascie";
+		break;										
+		
+		default:
+		strncpy(stream_name, "", stream_name_len);
+		res = NULL;
+		break;
+	}
+	return res;
+}
+
 uint16_t get_max_stream_id(void) {
 	return 12;
 }

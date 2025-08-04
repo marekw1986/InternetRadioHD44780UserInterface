@@ -53,6 +53,7 @@ void lcd_str_padd_rest(const char* str, const uint16_t len, char padd);
 void lcd_utf8str_padd_rest(const char* str, const uint16_t len, char padd);
 
 char* get_station_url_from_file(uint16_t number, char* working_buffer, size_t working_buffer_len, char* stream_name, size_t stream_name_len);
+char* get_file_path_from_audio_file_id(uint16_t number, char* working_buffer, size_t working_buffer_len, char* stream_name, size_t stream_name_len);
 uint16_t get_max_stream_id(void);
 
 void button_init(button_t* btn, void*, uint8_t id, void (*push_proc)(void), void (*long_proc)(void));

@@ -2,8 +2,8 @@ CFLAGS = -DPCDEBUG
 
 all: test
 
-test: low_level.o ui.o scrollable_list.o main_list.o main.o
-	gcc $(CFLAGS) -o test low_level.o ui.o scrollable_list.o main_list.o main.o
+test: low_level.o ui.o scrollable_list.o main_list.o dir_list.o main.o
+	gcc $(CFLAGS) -o test low_level.o ui.o scrollable_list.o main_list.o dir_list.o main.o
 
 low_level.o:
 	gcc $(CFLAGS) -c low_level.c -o low_level.o
@@ -13,6 +13,9 @@ ui:
 	
 main_list:
 	gcc $(CFLAGS) -c main_list.c	-o main_list.o
+	
+dir_list:
+	gcc $(CFLAGS) -c dir_list.c	-o dir_list.o
 	
 scrollable_list:
 	gcc $(CFLAGS) -c scrollable_list.c -o scrollable_list.o
